@@ -12,6 +12,7 @@ import {
 	RabbitExchanges,
 	RabbitQueues
 } from '@hermex/contracts'
+import { TraceContext } from '@hermex/core'
 
 export type EventHandler<T> = (event: BaseEvent<T>) => Promise<void>
 
@@ -127,7 +128,9 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 					`[AMQP Sub] Processing event from ${queueName} (Correlation: ${correlationId})`
 				)
 
-				await handler(event)
+				await TraceContext.run(correlationId, async () => {
+					await handler(event)
+				})
 				this.channel?.ack(msg)
 			} catch (err) {
 				this.logger.error(

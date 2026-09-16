@@ -17,6 +17,7 @@
 		"@grpc/grpc-js": "^1.12.6",
 		"@grpc/proto-loader": "^0.7.13",
 		"@hermex/contracts": "^1.2.1",
+		"@hermex/core": "^1.2.0",
 		"@nestjs/common": "^11.0.11",
 		"@nestjs/config": "^4.0.1",
 		"@nestjs/core": "^11.0.11",
@@ -32,7 +33,6 @@
 		"uuid": "^11.1.0"
 	},
 	"devDependencies": {
-		"@hermex/core": "^1.1.0",
 		"@nestjs/cli": "^11.0.5",
 		"@nestjs/schematics": "^11.0.2",
 		"@types/amqplib": "^0.10.6",
