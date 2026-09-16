@@ -11,7 +11,10 @@ export default registerAs(
 		password: process.env.DB_PASSWORD!,
 		database: process.env.DB_NAME!,
 		autoLoadEntities: true,
-		synchronize: process.env.NODE_ENV !== 'production',
+		synchronize:
+			process.env.DB_SYNCHRONIZE !== undefined
+				? process.env.DB_SYNCHRONIZE === 'true'
+				: process.env.NODE_ENV !== 'production',
 		logging: process.env.NODE_ENV === 'development'
 	})
 )

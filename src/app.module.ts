@@ -5,6 +5,7 @@ import appConfig from './config/app.config'
 import databaseConfig from './config/database.config'
 import { validateEnv } from './config/env.validation'
 import rabbitmqConfig from './config/rabbitmq.config'
+import { MetricsModule } from './modules/metrics/metrics.module'
 import { PaymentsModule } from './modules/payments/payments.module'
 import { RabbitMQModule } from './modules/rabbitmq/rabbitmq.module'
 
@@ -25,6 +26,7 @@ import { RabbitMQModule } from './modules/rabbitmq/rabbitmq.module'
 			useFactory: (config: ConfigService) => config.get('database')!
 		}),
 		RabbitMQModule,
+		MetricsModule,
 		PaymentsModule
 	]
 })

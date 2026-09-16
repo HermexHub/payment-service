@@ -26,6 +26,9 @@ export class EnvironmentVariables {
 	@IsNumber({}, { message: 'GRPC_PORT must be a number' })
 	GRPC_PORT!: number
 
+	@IsNumber({}, { message: 'METRICS_PORT must be a number' })
+	METRICS_PORT: number = 3003
+
 	@IsString()
 	@IsNotEmpty({ message: 'DB_HOST is required' })
 	DB_HOST!: string

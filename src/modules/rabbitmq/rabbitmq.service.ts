@@ -65,6 +65,14 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 		await this.channel.assertExchange(RabbitExchanges.DLX, 'topic', {
 			durable: true
 		})
+		await this.channel.assertQueue(RabbitQueues.DEAD_LETTER, {
+			durable: true
+		})
+		await this.channel.bindQueue(
+			RabbitQueues.DEAD_LETTER,
+			RabbitExchanges.DLX,
+			'#'
+		)
 
 		// Assert Queue: payment.inventory.events.queue (listens to inventory.reserved)
 		await this.channel.assertQueue(RabbitQueues.PAYMENT_INVENTORY_EVENTS, {

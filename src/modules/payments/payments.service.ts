@@ -22,6 +22,7 @@ import {
 } from '@hermex/contracts'
 import { RabbitMQService } from '../rabbitmq/rabbitmq.service'
 import { PaymentTransactionEntity } from './entities/payment-transaction.entity'
+import { MetricsService } from '../metrics/metrics.service'
 import { ProcessedEventEntity } from './entities/processed-event.entity'
 import { SimulationEngine } from './simulation/simulation.engine'
 
@@ -36,7 +37,8 @@ export class PaymentsService implements OnApplicationBootstrap {
 		@InjectRepository(ProcessedEventEntity)
 		private readonly processedEventRepository: Repository<ProcessedEventEntity>,
 		private readonly rabbitMQService: RabbitMQService,
-		private readonly simulationEngine: SimulationEngine
+		private readonly simulationEngine: SimulationEngine,
+		private readonly metricsService: MetricsService
 	) {}
 
 	async onApplicationBootstrap(): Promise<void> {
@@ -135,6 +137,8 @@ export class PaymentsService implements OnApplicationBootstrap {
 			idempotencyKey
 		} = data
 
+		const startTime = Date.now()
+
 		this.logger.log(
 			`[${correlationId}] Confirming payment for Order: ${orderId} (Scenario: ${scenario || 'AUTO'})`
 		)
@@ -198,6 +202,12 @@ export class PaymentsService implements OnApplicationBootstrap {
 			transaction.failureReason = undefined
 			await this.paymentRepository.save(transaction)
 
+			const durationSeconds = (Date.now() - startTime) / 1000
+			this.metricsService.recordPaymentSuccess(
+				transaction.currency,
+				durationSeconds
+			)
+
 			this.logger.log(
 				`[${correlationId}] Payment ${transaction.id} SUCCEEDED for Order ${orderId}`
 			)
@@ -228,6 +238,13 @@ export class PaymentsService implements OnApplicationBootstrap {
 			transaction.status = PaymentStatus.FAILED
 			transaction.failureReason = simResult.failureReason
 			await this.paymentRepository.save(transaction)
+
+			const durationSeconds = (Date.now() - startTime) / 1000
+			this.metricsService.recordPaymentFailure(
+				simResult.failureReason || 'Payment rejected',
+				transaction.currency,
+				durationSeconds
+			)
 
 			this.logger.warn(
 				`[${correlationId}] Payment ${transaction.id} FAILED for Order ${orderId}: ${simResult.failureReason}`
