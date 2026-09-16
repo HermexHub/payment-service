@@ -8,7 +8,7 @@ import {
 	PAYMENT_GRPC_METHODS,
 	PAYMENT_SERVICE_NAME
 } from '@hermex/contracts'
-import { CorrelationId } from '@hermex/core/decorators'
+import { CorrelationId } from '@hermex/core'
 import { PaymentsService } from './payments.service'
 
 @Controller()
