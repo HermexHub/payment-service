@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common'
-import { GrpcMethod } from '@nestjs/microservices'
+import { GrpcMethod, Payload } from '@nestjs/microservices'
 import {
 	ConfirmPaymentRequest,
 	ConfirmPaymentResponse,
@@ -17,16 +17,17 @@ export class PaymentsController {
 
 	@GrpcMethod(PAYMENT_SERVICE_NAME, PAYMENT_GRPC_METHODS.GET_PAYMENT_SESSION)
 	async getPaymentSession(
-		data: GetPaymentSessionRequest
+		@Payload() data: GetPaymentSessionRequest
 	): Promise<GetPaymentSessionResponse> {
 		return this.paymentsService.getPaymentSession(data.orderId)
 	}
 
 	@GrpcMethod(PAYMENT_SERVICE_NAME, PAYMENT_GRPC_METHODS.CONFIRM_PAYMENT)
 	async confirmPayment(
-		data: ConfirmPaymentRequest,
+		@Payload() data: ConfirmPaymentRequest,
 		@CorrelationId() correlationId?: string
 	): Promise<ConfirmPaymentResponse> {
 		return this.paymentsService.confirmPayment(data, correlationId)
 	}
 }
+
