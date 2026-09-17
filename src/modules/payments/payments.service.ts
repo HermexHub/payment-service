@@ -80,7 +80,7 @@ export class PaymentsService implements OnApplicationBootstrap {
 				orderId,
 				userId,
 				amount: totalAmount,
-				currency: currency || 'USD',
+				currency: currency || 'UAH',
 				status: PaymentStatus.PENDING
 			})
 			await this.paymentRepository.save(transaction)
